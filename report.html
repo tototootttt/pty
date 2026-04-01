@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ตารางติดตามการปรับปรุง Data Platform</title>
+  <style>
+    *{
+      box-sizing:border-box;
+      font-family:"Sarabun","Segoe UI",sans-serif;
+    }
+
+    html, body{
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      background:#dfe5ee;
+      color:#1f2937;
+    }
+
+    body{
+      padding:10px;
+    }
+
+    .container{
+      width:100%;
+      height:calc(100vh - 20px);
+      max-width:1400px;
+      margin:0 auto;
+    }
+
+    .card{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      background:#fff;
+      border-radius:20px;
+      box-shadow:0 12px 30px rgba(18,38,63,.08);
+      border:1px solid #e6eef8;
+      overflow:hidden;
+    }
+
+    .header{
+      flex:0 0 auto;
+      padding:16px 20px 12px;
+      background:linear-gradient(135deg,#0f4c81,#2563eb);
+      color:#fff;
+    }
+
+    .header h1{
+      margin:0 0 4px;
+      font-size:18px;
+      line-height:1.3;
+    }
+
+    .header p{
+      margin:0;
+      font-size:12px;
+      opacity:.95;
+    }
+
+    .toolbar{
+      flex:0 0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:10px 14px;
+      background:#f3f6fb;
+      border-bottom:1px solid #dfe7f3;
+    }
+
+    .toolbar-left,.toolbar-right{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    button{
+      border:none;
+      border-radius:10px;
+      padding:7px 12px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:700;
+      transition:.15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+    }
+
+    .btn-primary{ background:#2563eb; color:#fff; }
+    .btn-success{ background:#10b981; color:#fff; }
+    .btn-secondary{ background:#e5eefb; color:#1e3a8a; }
+    .btn-danger{ background:#fee2e2; color:#b91c1c; }
+
+    .page-btn{
+      background:#edf2ff;
+      color:#1d4ed8;
+      min-width:36px;
+      padding:7px 10px;
+    }
+
+    .page-btn.active{
+      background:#2563eb;
+      color:#fff;
+    }
+
+    .table-panel{
+      flex:1 1 auto;
+      min-height:0;
+      padding:10px;
+      background:#f8fbff;
+    }
+
+    .table-wrap{
+      height:100%;
+      overflow:auto;
+      border:1px solid #dbe4f2;
+      border-radius:14px;
+      background:#fff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:11px;
+      min-width:1150px;
+    }
+
+    thead th{
+      position:sticky;
+      top:0;
+      z-index:5;
+      background:#dfe8f5;
+      color:#16325c;
+      font-weight:700;
+      text-align:center;
+      padding:8px 6px;
+      border:1px solid #d0dcec;
+      word-break:break-word;
+    }
+
+    tbody td{
+      padding:5px;
+      border:1px solid #e5ebf3;
+      vertical-align:top;
+      word-break:break-word;
+      overflow-wrap:break-word;
+      background:#fff;
+    }
+
+    tbody tr:nth-child(even) td{
+      background:#fbfdff;
+    }
+
+    .editable{
+      width:100%;
+      min-height:26px;
+      padding:4px 6px;
+      border-radius:8px;
+      outline:none;
+      border:1px solid transparent;
+      white-space:pre-wrap;
+      word-break:break-word;
+      line-height:1.35;
+      font-size:11px;
+    }
+
+    .editable:focus{
+      background:#fff;
+      border-color:#93c5fd;
+      box-shadow:0 0 0 2px rgba(37,99,235,.08);
+    }
+
+    .center{
+      text-align:center;
+    }
+
+    .check-group{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .check-item{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      background:#f5f9ff;
+      border:1px solid #dce9ff;
+      border-radius:8px;
+      padding:4px 6px;
+      font-size:10px;
+      line-height:1.2;
+    }
+
+    .check-item input[type="checkbox"]{
+      width:14px;
+      height:14px;
+      accent-color:#2563eb;
+      flex-shrink:0;
+    }
+
+    .status-badge{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:800;
+      text-align:center;
+      background:#fff7ed;
+      color:#c2410c;
+      border:1px solid #fed7aa;
+      margin-top:4px;
+    }
+
+    .status-done{
+      background:#ecfdf5;
+      color:#047857;
+      border-color:#a7f3d0;
+    }
+
+    .action-btn{
+      width:100%;
+      border:none;
+      background:#fee2e2;
+      color:#b91c1c;
+      border-radius:8px;
+      padding:6px 4px;
+      font-size:10px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    col.no{width:4%}
+    col.code{width:5%}
+    col.office{width:10%}
+    col.division{width:11%}
+    col.dataset{width:16%}
+    col.filetype{width:5%}
+    col.frequency{width:5%}
+    col.latest{width:13%}
+    col.update{width:13%}
+    col.check{width:11%}
+    col.note{width:5%}
+    col.action{width:2%}
+
+    @media (max-width: 1000px){
+      .header h1{ font-size:16px; }
+      .header p{ font-size:11px; }
+      button{ font-size:11px; padding:6px 10px; }
+      table{ font-size:10px; }
+      .editable{ font-size:10px; }
+      .check-item{ font-size:9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>ตารางรายงานการติดตามการปรับปรุง Data Platform</h1>
+        <p>ฝ่าย/งานรายงานการติดตามการปรับปรุง data.pattaya ประจำวันที่ 30/3/2569 – 3/4/2569</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="btn-primary" onclick="addRow()">+ เพิ่มแถวใหม่</button>
+          <button class="btn-success" onclick="saveTable()">💾 บันทึกข้อมูล</button>
+          <button class="btn-secondary" onclick="loadTable()">↻ โหลดข้อมูล</button>
+          <button class="btn-danger" onclick="clearTable()">🗑 ล้างทั้งหมด</button>
+        </div>
+        <div class="toolbar-right" id="pagination"></div>
+      </div>
+
+      <div class="table-panel">
+        <div class="table-wrap">
+          <table>
+            <colgroup>
+              <col class="no"><col class="code"><col class="office"><col class="division">
+              <col class="dataset"><col class="filetype"><col class="frequency">
+              <col class="latest"><col class="update"><col class="check">
+              <col class="note"><col class="action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>ลำดับ</th>
+                <th>รหัส</th>
+                <th>สำนัก</th>
+                <th>ฝ่าย/งาน</th>
+                <th>ชื่อชุดข้อมูล</th>
+                <th>ไฟล์</th>
+                <th>ความถี่</th>
+                <th>ข้อมูลล่าสุด</th>
+                <th>ระหว่างปรับปรุง</th>
+                <th>ตรวจสอบ</th>
+                <th>หมายเหตุ</th>
+                <th>ลบ</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pageSize = 12;
+    let currentPage = 1;
+
+    const defaultData = [
+      {no:"1",code:"6",office:"กองการเจ้าหน้าที่",division:"ฝ่ายส่งเสริมและพัฒนาบุคลากร",dataset:"ชุดข้อมูลการฝึกอบรมหลักสูตรผู้ปฏิบัติงาน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการฝึกอบรมหลักสูตรผู้ปฏิบัติงาน ปีงบประมาณ 2567",update:"ชุดข้อมูลการฝึกอบรมหลักสูตรผู้ปฏิบัติงาน ประจำปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"2",code:"25",office:"เมืองพัทยา สาขาเกาะล้าน",division:"ฝ่ายบริหารงานสาธารณสุข",dataset:"ชุดข้อมูลการบริหารจัดการขยะ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการบริหารจัดการขยะเกาะล้าน ปีปฏิทิน 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"3",code:"26",office:"เมืองพัทยา สาขาเกาะล้าน",division:"ฝ่ายบริหารงานสาธารณสุข",dataset:"ชุดข้อมูลการบริหารจัดการความสะอาด",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการบริหารจัดการความสะอาด ปีปฏิทิน 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"4",code:"34",office:"สำนักการท่องเที่ยวและกีฬา",division:"ฝ่ายการประชาสัมพันธ์",dataset:"ชุดข้อมูลของการให้บริการผ่าน Pattaya Contact Center 1337",filetype:"CSV",frequency:"1 ปี",latest:"มีการลบข้อมูลเก่าออกไปแล้ว",update:"ข้อมูลของการให้บริการผ่าน Pattaya Contact Center 1337 ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"5",code:"60",office:"สำนักการศึกษา",division:"ฝ่ายวิชาการ",dataset:"ชุดข้อมูลผลสัมฤทธิ์ทางการเรียน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผลสัมฤทธิ์ทางการเรียน ปีการศึกษา 2566",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"6",code:"77",office:"สำนักการศึกษา",division:"ฝ่ายกิจกรรมเด็กและเยาวชน",dataset:"ชุดข้อมูลการจัดการแข่งขันกีฬา ดนตรี และศิลปะ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการจัดการแข่งขันกีฬา ดนตรี และศิลปะ ประจำปีงบประมาณ 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"7",code:"78",office:"สำนักการศึกษา",division:"ฝ่ายกิจกรรมเด็กและเยาวชน",dataset:"ชุดข้อมูลสมาชิกสภาเด็กและเยาวชนของแต่ละโรงเรียนในสังกัดเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลสมาชิกสภาเด็กและเยาวชนของแต่ละโรงเรียนในสังกัดเมืองพัทยา ประจำปีงบประมาณ 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"8",code:"82",office:"สำนักการศึกษา",division:"ฝ่ายส่งเสริมศาสนา ศิลปะและวัฒนธรรม",dataset:"ชุดข้อมูลผู้เข้าร่วมกิจกรรม การสืบสาน การเรียนรู้ทางด้านศาสนา ศิลปะวัฒนธรรมและภูมิปัญญาท้องถิ่น",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผู้เข้าร่วมกิจกรรม การสืบสาน การเรียนรู้ทางด้านศาสนา ศิลปะวัฒนธรรมและภูมิปัญญาท้องถิ่น",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"9",code:"86",office:"สำนักการศึกษา",division:"ฝ่ายการศึกษานอกระบบและตามอัธยาศัย",dataset:"ชุดข้อมูลผู้เข้าร่วมกิจกรรมส่งเสริมการเรียนรู้และจัดการศึกษานอกระบบและการศึกษาตามอัธยาศัย",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผู้เข้าร่วมกิจกรรมส่งเสริมการเรียนรู้และจัดการศึกษานอกระบบ ปีงบประมาณ 2567",update:"ข้อมูลผู้เข้าร่วมกิจกรรมส่งเสริมการเรียนรู้และจัดการศึกษานอกระบบ งบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"10",code:"91",office:"สำนักคลัง",division:"ฝ่ายพัฒนารายได้",dataset:"ชุดข้อมูลรายได้จากการจัดเก็บภาษีและค่าธรรมเนียมต่างๆ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลรายได้จากการจัดเก็บภาษีและค่าธรรมเนียมต่าง ปีงบประมาณ 2567",update:"ข้อมูลรายได้จากการจัดเก็บภาษีและค่าธรรมเนียมต่าง ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"11",code:"104",office:"สำนักช่าง",division:"ฝ่ายสาธารณูปโภค",dataset:"ชุดข้อมูลบริหารจัดการไฟฟ้าสาธารณะรวมทั้งสถานที่ราชการ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลบริหารจัดการไฟฟ้าสาธารณะรวมทั้งสถานที่ราชการ ปีงบประมาณ 2567",update:"ชุดข้อมูลบริหารจัดการไฟฟ้าสาธารณะรวมทั้งสถานที่ราชการ ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"12",code:"111",office:"สำนักช่าง",division:"ฝ่ายรณรงค์ระเบียบวินัยจราจร",dataset:"ชุดข้อมูลผลการดำเนินการป้องกันและลดอุบัติเหตุทางถนนเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผลการดำเนินการป้องกันและลดอุบัติเหตุทางถนนเมืองพัทยา ปีปฏิทิน 2567",update:"ชุดข้อมูลผลการดำเนินการป้องกันและลดอุบัติเหตุทางถนนเมืองพัทยา ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+
+      {no:"13",code:"112",office:"สำนักช่าง",division:"ฝ่ายระบบการจราจร",dataset:"ชุดข้อมูลปริมาณรถ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลปริมาณรถ ปีปฏิทิน 2567",update:"ปริมาณรถ ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"14",code:"116",office:"สำนักช่าง",division:"สำนักช่าง",dataset:"ชุดข้อมูลเส้นทางการคมนาคมและขนส่ง",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลเส้นทางการคมนาคมและขนส่ง",update:"ข้อมูลเส้นทางการคมนาคมและขนส่ง ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"15",code:"133",office:"สำนักช่างสุขาภิบาล",division:"ฝ่ายวิเคราะห์คุณภาพน้ำและควบคุมมลพิษ",dataset:"ชุดข้อมูลตรวจสอบสถานการณ์มลพิษทางน้ำ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลตรวจสอบสถานการณ์มลพิษทางน้ำคลอง ปีงบประมาณ 2567 / ข้อมูลตรวจสอบสถานการณ์มลพิษทางน้ำทะเล ปีงบประมาณ 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"16",code:"149",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายจัดการคุณภาพอากาศและเสียง",dataset:"ชุดผลการตรวจวัดติดตามคุณภาพอากาศและเสียงตามจุดต่างๆ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผลการตรวจวัดติดตามคุณภาพอากาศและเสียงตามจุดต่างๆ ปีปฏิทิน 2567",update:"ชุดผลการตรวจวัดติดตามคุณภาพอากาศตามจุดต่างๆ เพื่อเฝ้าระวังมลพิษทางอากาศ ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"17",code:"150",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายควบคุมการกำจัดมูลฝอยและสิ่งปฏิกูล",dataset:"ชุดข้อมูลสถิติจัดเก็บขยะและนำไปกำจัด เช่น ขยะทั่วไป ขยะติดเชื้อ ขยะอันตราย",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลสถิติจัดเก็บขยะและนำไปกำจัด เช่น ขยะทั่วไป ขยะติดเชื้อ ขยะอันตราย ปีปฏิทิน 2567",update:"ชุดข้อมูลสถิติจัดเก็บขยะและนำไปกำจัด เช่น ขยะทั่วไป ขยะติดเชื้อ ขยะอันตราย ประจำปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"18",code:"155",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายควบคุมการรักษาความสะอาด",dataset:"ชุดข้อมูลการจัดการดูดสิ่งปฏิกูล",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการจัดการดูดสิ่งปฏิกูล ปีปฏิทิน 2567",update:"ชุดข้อมูลการจัดการดูดสิ่งปฏิกูล 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"19",code:"159",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายพฤกษศาสตร์",dataset:"ชุดข้อมูลด้านการขยายพันธุ์ไม้ดอก-ไม้ประดับ ในแต่ละเดือน",filetype:"CSV",frequency:"1 ปี",latest:"การขยายพันธุ์ไม้ดอก ไม้ประดับ ประจำปีงบประมาณ 2567",update:"ชุดข้อมูลด้านการขยายพันธุ์ไม้ดอก ไม้ประดับ ในแต่ละเดือน ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"20",code:"160",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายพฤกษศาสตร์",dataset:"ชุดข้อมูลด้านการเข้าตรวจสอบ ซ่อมแซม บำรุง ดูแลรักษา ระบบไฟฟ้าและระบบน้ำรดต้นไม้",filetype:"CSV",frequency:"1 ปี",latest:"ชุดข้อมูลด้านการเข้าตรวจสอบ ซ่อมแซม บำรุง ดูแลรักษา ระบบไฟฟ้าและระบบน้ำรดต้นไม้",update:"ชุดข้อมูลด้านการขยายพันธุ์ไม้ดอก ไม้ประดับ ในแต่ละเดือน ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"21",code:"162",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายทรัพยากรธรรมชาติ",dataset:"ชุดข้อมูลการดูแลป่าชายเลน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการดูแลป่าชายเลน",update:"ข้อมูลการดูแลป่าชายเลน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"22",code:"163",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายทรัพยากรธรรมชาติ",dataset:"ชุดข้อมูลการใช้เทคโนโลยีพลังงานสะอาด",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการใช้เทคโนโลยีพลังงานสะอาด ปีปฏิทิน 2567",update:"ข้อมูลการใช้เทคโนโลยีพลังงานสะอาด ปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"23",code:"164",office:"สำนักทรัพยากรธรรมชาติและสิ่งแวดล้อม",division:"ฝ่ายทรัพยากรธรรมชาติ",dataset:"ชุดข้อมูลการบริหารจัดการพื้นที่สีเขียว",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการบริหารจัดการพื้นที่สีเขียว ปีงบประมาณ 2567",update:"ชุดข้อมูลการบริหารจัดการพื้นที่สีเขียว ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"24",code:"170",office:"สำนักปลัดเมืองพัทยา",division:"ฝ่ายควบคุมความปลอดภัยทางทะเล",dataset:"ชุดข้อมูลสถิติการใช้บริการเรือโดยสารและเรือสปีดโบ๊ท",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลสถิติการใช้บริการเรือโดยสารและเรือสปีดโบ๊ท ปีปฏิทิน 2567",update:"ข้อมูลสถิติการใช้บริการเรือโดยสารและเรือสปีดโบ๊ท ปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+
+      {no:"25",code:"171",office:"สำนักปลัดเมืองพัทยา",division:"ฝ่ายควบคุมความปลอดภัยทางทะเล",dataset:"ชุดข้อมูลการเกิดอุบัติเหตุทางทะเล",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการเกิดอุบัติเหตุทางทะเล",update:"ข้อมูลสถิติการเกิดอุบัติเหตุทางทะเล ปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"26",code:"172",office:"สำนักปลัดเมืองพัทยา",division:"ฝ่ายรักษาความสงบเรียบร้อย",dataset:"ชุดข้อมูลนักท่องเที่ยวเดินทางลงเกาะล้าน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลนักท่องเที่ยวเดินทางลงเกาะล้าน ปีปฏิทิน 2565 - 2567",update:"ยอดนักท่องเที่ยวเดินทางไปเกาะล้าน ปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"27",code:"213",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายงบประมาณ",dataset:"ชุดข้อมูลข้อบัญญัติงบประมาณรายจ่ายประจำปีและข้อบัญญัติงบประมาณรายจ่ายเพิ่มเติมของเมืองพัทยา",filetype:"CSV/RDF",frequency:"1 ปี",latest:"ข้อมูลข้อบัญญัติงบประมาณรายจ่ายประจำปี 2567 และข้อมูลข้อบัญญัติงบประมาณรายจ่ายเพิ่มเติมของเมืองพัทยา",update:"ข้อบัญญัติงบประมาณ ประจำปีงบประมาณ พ.ศ.2568 / ข้อบัญญัติงบประมาณรายจ่ายเพิ่มเติม (ฉบับที่ 2) พ.ศ.2568 / บางรายการไม่มีข้อมูลอัปเดต",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"28",code:"215",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายงบประมาณและเงินอุดหนุน",dataset:"ชุดข้อมูลงบประมาณรายจ่ายประจำปี (เงินอุดหนุนจากส่วนกลาง)",filetype:"CSV/RDF",frequency:"1 ปี",latest:"ข้อมูลงบประมาณรายจ่ายประจำปี (เงินอุดหนุนจากส่วนกลาง)",update:"งบประมาณรายจ่าย ประจำปีงบประมาณ พ.ศ.2568 (เงินอุดหนุนจากส่วนกลาง)",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"29",code:"226",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายยุทธศาสตร์และแผนงาน",dataset:"ชุดข้อมูลแผนพัฒนาเมืองพัทยา",filetype:"CSV/RDF",frequency:"1 ปี",latest:"ข้อมูลแผนพัฒนาเมืองพัทยา ปี 2567",update:"การทบทวนแผนพัฒนาเมืองพัทยา ฉบับที่ 2 พ.ศ. 2566 - 2570 (เปลี่ยนแปลง แก้ไข เพิ่มเติม 2568)",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"30",code:"231",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายวิจัยและประเมินผล",dataset:"ชุดข้อมูลติดตามประเมินผลแผนพัฒนาเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลติดตามประเมินผลแผนพัฒนาเมืองพัทยา จำแนกตามยุทธศาสตร์และแผนงาน ปี 2567 / จำแนกตามส่วนราชการและสถานะโครงการ ปี 2567",update:"ข้อมูลติดตามประเมินผลแผนพัฒนาเมืองพัทยา จำแนกตามยุทธศาสตร์และแผนงาน ปี 2568 / จำแนกตามส่วนราชการและสถานะโครงการ ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"31",code:"232",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายวิจัยและประเมินผล",dataset:"ชุดข้อมูลติดตามแผนดำเนินงานเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลติดตามแผนดำเนินงานเมืองพัทยา ประจำปีงบประมาณ พ.ศ.2567",update:"ข้อมูลติดตามแผนดำเนินงานเมืองพัทยา ประจำปีงบประมาณ พ.ศ.2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"32",code:"238",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายวิจัยและประเมินผล",dataset:"ชุดข้อมูลด้านประชากรแฝงของเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลด้านประชากรแฝงของเมืองพัทยา งบประมาณ 2563-2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:"หน่วยงานแจ้งไม่มีข้อมูลอัปเดต เมื่อวันที่ 28/2/2569"},
+      {no:"33",code:"242",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายเทคโนโลยีสารสนเทศ",dataset:"ชุดข้อมูลจุดให้บริการสัญญาณอินเทอร์เน็ตสำหรับหน่วยงานในสังกัดเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลจุดให้บริการสัญญาณอินเทอร์เน็ตสำหรับหน่วยงานในสังกัดเมืองพัทยา ประจำปีปฏิทิน พ.ศ. 2567",update:"ข้อมูลจุดให้บริการสัญญาณอินเทอร์เน็ตสำหรับหน่วยงานในสังกัดเมืองพัทยา ประจำปีปฏิทิน พ.ศ. 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"34",code:"243",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายเทคโนโลยีสารสนเทศ",dataset:"ชุดข้อมูลการใช้งานแอปพลิเคชันไลน์ @pattaya connect",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลการใช้งานแอปพลิเคชันไลน์ @pattayaconnect ปีงบประมาณ 2567",update:"ข้อมูลการใช้งานแอปพลิเคชันไลน์ @pattayaconnect ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"35",code:"244",office:"สำนักยุทธศาสตร์และงบประมาณ",division:"ฝ่ายการสื่อสาร",dataset:"ชุดข้อมูลสถานะความพร้อมการใช้งานของกล้องโทรทัศน์วงจรปิด",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลสถานะความพร้อมการใช้งานของกล้องโทรทัศน์วงจรปิด",update:"สถานะกล้องโทรทัศน์วงจรปิด ปี 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"36",code:"258",office:"สำนักสวัสดิการสังคม",division:"ฝ่ายส่งเสริมและพัฒนาอาชีพ",dataset:"ชุดข้อมูลแผนการดำเนินงานด้านการพัฒนาเศรษฐกิจชุมชน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลแผนการดำเนินงานด้านการพัฒนาเศรษฐกิจชุมชน ปีงบประมาณ 2567",update:"ข้อมูลแผนการดำเนินงานด้านการพัฒนาเศรษฐกิจชุมชน ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+
+      {no:"37",code:"259",office:"สำนักสวัสดิการสังคม",division:"ฝ่ายส่งเสริมและพัฒนาอาชีพ",dataset:"ชุดข้อมูลกลุ่มอาชีพของเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลกลุ่มอาชีพของเมืองพัทยา",update:"ข้อมูลกลุ่มอาชีพของเมืองพัทยา 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"38",code:"261",office:"สำนักสวัสดิการสังคม",division:"ฝ่ายส่งเสริมและพัฒนาอาชีพ",dataset:"ชุดข้อมูลผลิตภัณฑ์และการบริการของชุมชน",filetype:"CSV",frequency:"1 ปี",latest:"ชุดข้อมูลผลิตภัณฑ์และการบริการของชุมชน",update:"ชุดข้อมูลผลิตภัณฑ์และการบริการของชุมชน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"39",code:"262",office:"สำนักสวัสดิการสังคม",division:"ฝ่ายส่งเสริมสวัสดิการสังคม",dataset:"ชุดข้อมูลผู้รับเบี้ยยังชีพผู้สูงอายุ ของเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผู้รับเบี้ยยังชีพผู้สูงอายุ ของเมืองพัทยา ปีงบประมาณ 2567",update:"ข้อมูลผู้รับเบี้ยยังชีพผู้สูงอายุ ของเมืองพัทยา ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"40",code:"263",office:"สำนักสวัสดิการสังคม",division:"ฝ่ายส่งเสริมสวัสดิการสังคม",dataset:"ชุดข้อมูลผู้รับเบี้ยยังชีพความพิการ ของเมืองพัทยา",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผู้รับเบี้ยยังชีพความพิการ ของเมืองพัทยา ปีงบประมาณ 2567",update:"ข้อมูลผู้รับเบี้ยยังชีพความพิการ ของเมืองพัทยา ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"41",code:"270",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายสุขาภิบาลและอนามัยสิ่งแวดล้อม",dataset:"ชุดข้อมูลผลสรุปการแก้ไขเหตุรำคาญและมลภาวะ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผลสรุปการแก้ไขเหตุรำคาญและมลภาวะ ปีงบประมาณ 2567",update:"ข้อมูลผลสรุปการแก้ไขเหตุรำคาญและมลภาวะ ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:"ยังไม่ได้ดำเนินการลบชุดข้อมูลใหม่ที่สร้างขึ้น"},
+      {no:"42",code:"278",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายป้องกันและควบคุมโรค",dataset:"ชุดข้อมูลสถิติผู้ป่วยจำแนกตามโรคติดต่อทั่วไป",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลสถิติผู้ป่วยจำแนกตามโรคติดต่อทั่วไป ปีปฏิทิน 2567",update:"ชุดข้อมูลสถิติผู้ป่วยจำแนกตามโรคติดต่อทั่วไป ปีปฏิทิน 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"43",code:"289",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายส่งเสริมสุขภาพ",dataset:"ชุดข้อมูลจำนวนผลการตรวจสุขภาพทุกกลุ่มวัย",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลจำนวนผลการตรวจสุขภาพทุกกลุ่มวัย",update:"ชุดข้อมูลจำนวนผลการตรวจสุขภาพทุกกลุ่มวัย 68",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"44",code:"290",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายส่งเสริมสุขภาพ",dataset:"ชุดข้อมูลจำนวนสมาชิก อสม.",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลจำนวนสมาชิก อสม. ปีปฏิทิน 2567",update:"ชุดข้อมูลจำนวนสมาชิก อสม. 68",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"45",code:"291",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายส่งเสริมสุขภาพ",dataset:"ชุดข้อมูลจำนวนสมาชิกชมรมผู้สูงอายุ",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลผู้รับเบี้ยยังชีพผู้สูงอายุ ของเมืองพัทยา ปีงบประมาณ 2567",update:"ชุดข้อมูลจำนวนสมาชิกชมรมผู้สูงอายุ 68",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"46",code:"293",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายบำบัดรักษาการติดสารเสพติด",dataset:"ชุดข้อมูลการบำบัดรักษาฟื้นฟูสมรรถภาพผู้ติดสารเสพติด/บุหรี่",filetype:"CSV",frequency:"1 ครั้ง/ปี",latest:"ข้อมูลการบำบัดรักษาฟื้นฟูสมรรถภาพผู้ติดสารเสพติด/บุหรี่ ปีงบประมาณ 2567",update:"ข้อมูลการบำบัดรักษาฟื้นฟูสมรรถภาพผู้ติดสารเสพติด/บุหรี่ ปีงบประมาณ 2568",checkDisplay:true,checkVisualization:true,checkDictionary:true,note:""},
+      {no:"47",code:"297",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายบริการสาธารณสุข",dataset:"ชุดข้อมูลบริการดูแลผู้ป่วยในชุมชน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลบริการดูแลผู้ป่วยในชุมชน ปีงบประมาณ 2564-2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""},
+      {no:"48",code:"302",office:"สำนักสาธารณสุขและสิ่งแวดล้อม",division:"ฝ่ายบริการสาธารณสุข",dataset:"ชุดข้อมูลบริการยืมอุปกรณ์การแพทย์เพื่อใช้ดูแลผู้ป่วยที่บ้าน",filetype:"CSV",frequency:"1 ปี",latest:"ข้อมูลบริการยืมอุปกรณ์การแพทย์เพื่อใช้ดูแลผู้ป่วยที่บ้าน ปีงบประมาณ 2567",update:"ยังไม่ดำเนินการ",checkDisplay:false,checkVisualization:false,checkDictionary:false,note:""}
+    ];
+
+    function getData(){
+      const saved = localStorage.getItem("pattayaDataTable48");
+      return saved ? JSON.parse(saved) : defaultData;
+    }
+
+    function setData(data){
+      localStorage.setItem("pattayaDataTable48", JSON.stringify(data));
+    }
+
+    function getStatusClass(row){
+      return (row.checkDisplay && row.checkVisualization && row.checkDictionary)
+        ? "status-badge status-done"
+        : "status-badge";
+    }
+
+    function getStatusText(row){
+      return (row.checkDisplay && row.checkVisualization && row.checkDictionary) ? "ครบถ้วน" : "ค้าง";
+    }
+
+    function renderPagination(totalItems){
+      const totalPages = Math.ceil(totalItems / pageSize) || 1;
+      if(currentPage > totalPages) currentPage = totalPages;
+
+      const el = document.getElementById("pagination");
+      el.innerHTML = "";
+
+      for(let i=1;i<=totalPages;i++){
+        const btn = document.createElement("button");
+        btn.className = "page-btn" + (i === currentPage ? " active" : "");
+        btn.textContent = i;
+        btn.onclick = () => {
+          saveCurrentPageEdits();
+          currentPage = i;
+          renderTable();
+        };
+        el.appendChild(btn);
+      }
+    }
+
+    function renderTable(){
+      const data = getData();
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      const start = (currentPage - 1) * pageSize;
+      const pageRows = data.slice(start, start + pageSize);
+
+      pageRows.forEach((row, pageIndex) => {
+        const tr = document.createElement("tr");
+        tr.dataset.realIndex = start + pageIndex;
+
+        tr.innerHTML = `
+          <td class="center"><div class="editable" contenteditable="true">${row.no || ""}</div></td>
+          <td class="center"><div class="editable" contenteditable="true">${row.code || ""}</div></td>
+          <td><div class="editable" contenteditable="true">${row.office || ""}</div></td>
+          <td><div class="editable" contenteditable="true">${row.division || ""}</div></td>
+          <td><div class="editable" contenteditable="true">${row.dataset || ""}</div></td>
+          <td class="center"><div class="editable" contenteditable="true">${row.filetype || ""}</div></td>
+          <td class="center"><div class="editable" contenteditable="true">${row.frequency || ""}</div></td>
+          <td><div class="editable" contenteditable="true">${row.latest || ""}</div></td>
+          <td><div class="editable" contenteditable="true">${row.update || ""}</div></td>
+          <td>
+            <div class="check-group">
+              <label class="check-item">
+                <input type="checkbox" ${row.checkDisplay ? "checked" : ""} onchange="updateStatus(this)">
+                แสดงผล
+              </label>
+              <label class="check-item">
+                <input type="checkbox" ${row.checkVisualization ? "checked" : ""} onchange="updateStatus(this)">
+                Visual
+              </label>
+              <label class="check-item">
+                <input type="checkbox" ${row.checkDictionary ? "checked" : ""} onchange="updateStatus(this)">
+                Dictionary
+              </label>
+              <div class="${getStatusClass(row)}">${getStatusText(row)}</div>
+            </div>
+          </td>
+          <td><div class="editable" contenteditable="true">${row.note || ""}</div></td>
+          <td class="center"><button class="action-btn" onclick="deleteRow(this)">ลบ</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      renderPagination(data.length);
+    }
+
+    function saveCurrentPageEdits(){
+      const data = getData();
+      const rows = document.querySelectorAll("#tableBody tr");
+
+      rows.forEach((row) => {
+        const idx = Number(row.dataset.realIndex);
+        const editables = row.querySelectorAll(".editable");
+        const checks = row.querySelectorAll('input[type="checkbox"]');
+
+        data[idx] = {
+          no: editables[0]?.innerText.trim() || "",
+          code: editables[1]?.innerText.trim() || "",
+          office: editables[2]?.innerText.trim() || "",
+          division: editables[3]?.innerText.trim() || "",
+          dataset: editables[4]?.innerText.trim() || "",
+          filetype: editables[5]?.innerText.trim() || "",
+          frequency: editables[6]?.innerText.trim() || "",
+          latest: editables[7]?.innerText.trim() || "",
+          update: editables[8]?.innerText.trim() || "",
+          checkDisplay: checks[0]?.checked || false,
+          checkVisualization: checks[1]?.checked || false,
+          checkDictionary: checks[2]?.checked || false,
+          note: editables[9]?.innerText.trim() || ""
+        };
+      });
+
+      setData(data);
+    }
+
+    function saveTable(){
+      saveCurrentPageEdits();
+      alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+    }
+
+    function loadTable(){
+      renderTable();
+    }
+
+    function addRow(){
+      saveCurrentPageEdits();
+      const data = getData();
+      data.push({
+        no:String(data.length + 1),
+        code:"",
+        office:"",
+        division:"",
+        dataset:"",
+        filetype:"CSV",
+        frequency:"1 ปี",
+        latest:"",
+        update:"",
+        checkDisplay:false,
+        checkVisualization:false,
+        checkDictionary:false,
+        note:""
+      });
+      setData(data);
+      currentPage = Math.ceil(data.length / pageSize);
+      renderTable();
+    }
+
+    function deleteRow(button){
+      if(!confirm("ต้องการลบแถวนี้ใช่หรือไม่?")) return;
+      saveCurrentPageEdits();
+      const row = button.closest("tr");
+      const idx = Number(row.dataset.realIndex);
+      const data = getData();
+      data.splice(idx, 1);
+
+      data.forEach((item, i) => item.no = String(i + 1));
+      setData(data);
+
+      const totalPages = Math.ceil(data.length / pageSize) || 1;
+      if(currentPage > totalPages) currentPage = totalPages;
+
+      renderTable();
+    }
+
+    function clearTable(){
+      if(!confirm("ต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?")) return;
+      localStorage.removeItem("pattayaDataTable48");
+      currentPage = 1;
+      renderTable();
+    }
+
+    function updateStatus(checkbox){
+      const tr = checkbox.closest("tr");
+      const checks = tr.querySelectorAll('input[type="checkbox"]');
+      const badge = tr.querySelector(".status-badge");
+      const allChecked = [...checks].every(c => c.checked);
+
+      badge.className = allChecked ? "status-badge status-done" : "status-badge";
+      badge.textContent = allChecked ? "ครบถ้วน" : "ค้าง";
+    }
+
+    loadTable();
+  </script>
+</body>
+</html>
